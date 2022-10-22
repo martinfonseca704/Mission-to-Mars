@@ -20,6 +20,7 @@ def scrape_all():
           "news_paragraph": news_paragraph,
           "featured_image": featured_image(browser),
           "facts": mars_facts(),
+          "hemispheres": hemispheres(browser),
           "last_modified": dt.datetime.now()
     }
     
@@ -102,7 +103,41 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html()
 
-#10.5.3 Integrate MongoDB Into the Web App
+#Hemispheres
+def hemispheres(browser):
+
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+
+    hemisphere_image_urls = []
+
+# 3. Write code to retrieve the image urls and titles for each hemisphere.
+    images = browser.find_by_css('a.product-item img')
+
+    for image in range(len(images)):
+        hemispheres = {}
+    
+        browser.find_by_css('a.product-item img')[image].click()
+    
+    # pulls full image link from page
+        img_elem = browser.links.find_by_text('Sample').first
+        img_url = img_elem['href']
+        hemispheres['img_url'] = img_url
+    
+    # pulls image title    
+        html = browser.html
+        title_soup = soup(html, 'html.parser')
+        title = title_soup.find('h2', {'class':'title'}).get_text()
+        hemispheres['title'] = title
+    
+    # add dictionary to list
+        hemisphere_image_urls.append(hemispheres)
+    
+    # to back to home page
+        browser.back()  
+
+    return hemisphere_image_urls
+
 if __name__ == "__main__":
 
 #10.5.3 Integrate MongoDB Into the Web App
